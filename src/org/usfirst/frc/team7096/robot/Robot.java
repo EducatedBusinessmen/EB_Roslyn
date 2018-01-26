@@ -14,9 +14,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.CameraServer;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.*;
-
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the IterativeRobot
@@ -28,13 +25,8 @@ public class Robot extends IterativeRobot {
 	private DifferentialDrive m_robotDrive
 			= new DifferentialDrive(new Spark(0), new Spark(1));
 	private Joystick m_stick = new Joystick(0);
-	
-	
 	private Timer m_timer = new Timer();
-	private TalonSRX m_Wheel = new TalonSRX(0);
-	
-	
-	
+
 	/**
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
@@ -72,7 +64,6 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopInit() {
-		m_Wheel.set(ControlMode.PercentOutput, 0);
 	}
 
 	/**
@@ -81,16 +72,8 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 		m_robotDrive.arcadeDrive(m_stick.getY(), m_stick.getX());
-		int value;
-		value = m_stick.getPOV();
-		if(value == 0) {
-			m_Wheel.set(ControlMode.PercentOutput, .8);
-		}
-		else {
-			m_Wheel.set(ControlMode.PercentOutput, 0);
-		}
 	}
-	
+
 	/**
 	 * This function is called periodically during test mode.
 	 */
