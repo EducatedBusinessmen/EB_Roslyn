@@ -26,6 +26,7 @@ public class Robot extends IterativeRobot {
 			= new DifferentialDrive(new Spark(0), new Spark(1));
 	private Joystick m_stick = new Joystick(0);
 	private Timer m_timer = new Timer();
+	private String color = "unassigned";
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -35,6 +36,7 @@ public class Robot extends IterativeRobot {
 	public void robotInit() {
 		CameraServer.getInstance().startAutomaticCapture(0);
 	    CameraServer.getInstance().startAutomaticCapture(1);
+	    System.out.println("Our color is " + color);
 	}
 
 	/**
