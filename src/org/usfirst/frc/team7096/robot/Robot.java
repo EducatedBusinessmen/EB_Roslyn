@@ -9,28 +9,34 @@ package org.usfirst.frc.team7096.robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import java.lang.Math.*;
 
 public class Robot extends IterativeRobot {
-	DifferentialDrive robotDrive
-			= new DifferentialDrive(new Spark(0), new Spark(1));
 	
 	Joystick operator = new Joystick(0);
 	Joystick joystick_L = new Joystick(1);
 	Joystick joystick_R = new Joystick(2);
 	Joystick gamepad = new Joystick(3);
 	
-	Servo servo = new Servo(2);
-	TalonSRX panTalon = new TalonSRX(0);
-	Encoder enc = new Encoder(0,1);
+	WPI_TalonSRX T1 = new WPI_TalonSRX(1);
+	WPI_TalonSRX T2 = new WPI_TalonSRX(2);
+	WPI_TalonSRX T3 = new WPI_TalonSRX(3);
+	WPI_TalonSRX T4 = new WPI_TalonSRX(4);
+	
+	SpeedControllerGroup m_left = new SpeedControllerGroup(T1, T4);
+	SpeedControllerGroup m_right = new SpeedControllerGroup(T2, T3);
+	DifferentialDrive robotDrive = new DifferentialDrive(m_left, m_right);
+
+	
 	Timer timer = new Timer();
 	
-	double vMult = 1.0;
+	double vMult = 0;
 	double a = 0;
 	
-	boolean pov = false;
 	
 	boolean previousButton = false;
 	boolean currentButton = false;
@@ -67,15 +73,14 @@ public class Robot extends IterativeRobot {
 		
 	@Override
 	public void teleopInit() {
-		enc.reset();
-		vMult = 1.0;
+		vMult = 0;
 		robotDrive.stopMotor();
 		
 		previousButton = false;
 		currentButton = false;
 		vHalf = false;
 		
-		a = 1.0; //constant (0 to 1)
+		a = 0.8; //constant (0 to 1)
 	}
 
 	boolean tankDriveMode = true;
@@ -100,6 +105,11 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 		
+		a = (joystick_L.getThrottle() + 1)/2;
+		vMult = (joystick_R.getThrottle() + 1)/2;
+		System.out.println("sens " + a);
+		System.out.println("volts " + vMult);
+		
 		previousButton = currentButton;
 		currentButton = operator.getRawButton(10);
 
@@ -108,11 +118,9 @@ public class Robot extends IterativeRobot {
 			vHalf = !vHalf;
 			
 			if(vHalf) {
-				a = 1.0;
 				System.out.println("toggle_1");
 			}
 			else {
-				a = 1.0;
 				System.out.println("toggle_2");
 			}
 		}
@@ -132,8 +140,8 @@ public class Robot extends IterativeRobot {
 			
 			double R = joyMod(joystick_R.getRawAxis(1));
 			double L = joyMod(joystick_L.getRawAxis(1));
-			System.out.println(R + " " + L);
-			robotDrive.tankDrive(R, L);
+			//System.out.println(R + " " + L);
+			robotDrive.tankDrive(L*vMult, R*vMult);
 		}
 		
 		//prints
